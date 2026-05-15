@@ -12,21 +12,35 @@ export class FirebaseService {
     localStorage.setItem('sudonityUserId', this.userId);
     
     this.nickname = localStorage.getItem('userNickname') || '';
+    this.currentSize = 9;
   }
 
   generateRoomId() {
     return Math.random().toString(36).substr(2, 9);
   }
 
+  initBoard(initialBoard, size) {
+    const boardRef = ref(this.db, `rooms/${this.roomId}/board`);
+    set(boardRef, {
+      cells: initialBoard,
+      size: size,
+      lastUpdate: serverTimestamp()
+    });
+  }
+
   syncBoard(callback) {
     const boardRef = ref(this.db, `rooms/${this.roomId}/board`);
     onValue(boardRef, (snapshot) => {
-      callback(snapshot.val());
+      const data = snapshot.val();
+      if (data && data.size) {
+        this.currentSize = data.size;
+      }
+      callback(data);
     });
   }
 
   updateCell(r, c, value, isNote = false) {
-    const cellRef = ref(this.db, `rooms/${this.roomId}/board/${r}/${c}`);
+    const cellRef = ref(this.db, `rooms/${this.roomId}/board/cells/${r}/${c}`);
     if (isNote) {
       update(cellRef, { notes: value, value: null }); // Clear value when adding notes
     } else {

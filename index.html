@@ -44,8 +44,16 @@
           <!-- Цифры 1-25 -->
         </div>
 
+        <div class="game-settings" style="margin-bottom: 12px;">
+          <label style="font-size: 11px; color: var(--text-secondary); display: block; margin-bottom: 4px;">Размер поля:</label>
+          <select id="board-size-select" style="width: 100%; background: var(--bg-color); border: 1px solid var(--border-color); color: white; padding: 8px; border-radius: 6px; font-size: 13px;">
+            <option value="9">9 x 9 (Классика)</option>
+            <option value="16">16 x 16 (Сложно)</option>
+            <option value="25" selected>25 x 25 (Гигант)</option>
+          </select>
+        </div>
         <button class="btn btn-secondary" id="clear-cell">Очистить клетку</button>
-        <button class="btn" id="new-game">Новый гигантский пазл</button>
+        <button class="btn" id="new-game">Новый пазл</button>
       </div>
     </aside>
 

@@ -14,7 +14,8 @@ const firebaseConfig = {
 };
 
 let firebaseService = null;
-const generator = new SudokuGenerator(25);
+let currentSize = 25;
+let generator = new SudokuGenerator(currentSize);
 let selectedCell = null;
 let inputMode = 'digit'; // 'digit' or 'note'
 
@@ -85,7 +86,8 @@ window.addEventListener('keydown', (e) => {
 // Initialize Number Pad
 function createNumberPad() {
   const pad = document.getElementById('number-pad');
-  for (let i = 1; i <= 25; i++) {
+  pad.innerHTML = '';
+  for (let i = 1; i <= currentSize; i++) {
     const btn = document.createElement('button');
     btn.className = 'num-btn';
     btn.textContent = i;
@@ -139,16 +141,19 @@ document.getElementById('clear-cell').addEventListener('click', () => {
 });
 
 document.getElementById('new-game').addEventListener('click', () => {
-  if (confirm('Создать новый гигантский пазл? Это очистит текущее поле для всех!')) {
+  const size = parseInt(document.getElementById('board-size-select').value);
+  if (confirm(`Создать новый пазл ${size}x${size}? Это очистит текущее поле для всех!`)) {
+    currentSize = size;
+    generator = new SudokuGenerator(currentSize);
     const { puzzle } = generator.generate();
     const initialBoard = puzzle.map((row) => row.map((val) => ({
       value: val,
       fixed: val !== null,
       notes: []
     })));
-    console.log('Generating board...');
-    firebaseService.initBoard(initialBoard);
-    alert('Новый пазл создан! Поле скоро обновится.');
+    
+    firebaseService.initBoard(initialBoard, currentSize);
+    alert('Новый пазл создан!');
   }
 });
 
@@ -193,12 +198,19 @@ function initFirebase(config) {
     firebaseService.updateNickname(firebaseService.userId.substr(0, 5));
   }
 
-  firebaseService.syncBoard((board) => {
-    if (!board) {
-      systemMsg('Комната пуста. Нажми "Новый гигантский пазл", чтобы начать.');
-    } else {
-      updateBoardUI(board);
+  firebaseService.syncBoard((data) => {
+    if (!data) return;
+    
+    const board = data.cells || data; // Handle old and new structures
+    const size = data.size || 25;
+
+    if (size !== currentSize) {
+      currentSize = size;
+      createGrid();
+      createNumberPad();
     }
+
+    updateBoardUI(board);
   });
 
   firebaseService.syncPresence((presence) => {

@@ -30,11 +30,18 @@ const saveConfigBtn = document.getElementById('save-config');
 // Initialize Grid
 function createGrid() {
   gridEl.innerHTML = '';
-  for (let r = 0; r < 25; r++) {
-    for (let c = 0; c < 25; c++) {
+  gridEl.style.setProperty('--grid-size', currentSize);
+  
+  // Set explicit grid-template for mobile and desktop consistency
+  gridEl.style.display = 'grid';
+  gridEl.style.gridTemplateColumns = `repeat(${currentSize}, 1fr)`;
+  gridEl.style.gridTemplateRows = `repeat(${currentSize}, 1fr)`;
+
+  for (let r = 0; r < currentSize; r++) {
+    for (let c = 0; c < currentSize; c++) {
       const cell = document.createElement('div');
       cell.className = 'cell';
-      if ((r + 1) % 5 === 0 && r < 24) cell.classList.add('cell-row-5n');
+      if ((r + 1) % 5 === 0 && r < currentSize - 1) cell.classList.add('cell-row-5n');
       cell.dataset.r = r;
       cell.dataset.c = c;
       
@@ -199,18 +206,21 @@ function initFirebase(config) {
   }
 
   firebaseService.syncBoard((data) => {
-    if (!data) return;
+    if (!data) {
+      systemMsg('Комната пуста. Нажми "Новый пазл", чтобы начать.');
+      return;
+    }
     
-    const board = data.cells || data; // Handle old and new structures
-    const size = data.size || 25;
+    const board = data.cells || (Array.isArray(data) ? data : null);
+    const size = data.size || (Array.isArray(data) ? 25 : currentSize);
 
-    if (size !== currentSize) {
+    if (board && size !== currentSize) {
       currentSize = size;
       createGrid();
       createNumberPad();
     }
 
-    updateBoardUI(board);
+    if (board) updateBoardUI(board);
   });
 
   firebaseService.syncPresence((presence) => {

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Sudonity | Гигантское Совместное Судоку</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div id="app">
+    <button class="mobile-menu-toggle" id="menu-toggle">☰</button>
+    
+    <aside class="sidebar" id="sidebar">
+      <div class="logo">Sudonity</div>
+      
+      <div class="user-profile">
+        <input type="text" id="user-nickname" placeholder="Твой никнейм..." maxlength="15" />
+      </div>
+
+      <div class="chat-container">
+        <div class="chat-messages" id="chat-messages">
+          <div class="message">
+            <div class="sender">Система</div>
+            Добро пожаловать в Sudonity. Отправь ссылку другу, чтобы играть вместе.
+          </div>
+        </div>
+        <div class="chat-input">
+          <input type="text" id="chat-input" placeholder="Написать сообщение..." />
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="mode-toggle">
+          <button class="mode-btn active" id="mode-digit">Цифры</button>
+          <button class="mode-btn" id="mode-note">Заметки</button>
+          <button class="mode-btn" id="mode-search">Поиск</button>
+        </div>
+        
+        <div class="number-pad" id="number-pad">
+          <!-- Цифры 1-25 -->
+        </div>
+
+        <button class="btn btn-secondary" id="clear-cell">Очистить клетку</button>
+        <button class="btn" id="new-game">Новый гигантский пазл</button>
+      </div>
+    </aside>
+
+    <main class="game-area">
+      <div class="grid-viewport" id="grid-viewport">
+        <div class="sudoku-grid" id="grid"></div>
+      </div>
+      
+      <aside class="quick-highlight">
+        <div class="highlight-label">ПОИСК</div>
+        <div class="highlight-grid" id="highlight-grid"></div>
+        <button class="clear-highlight-btn" id="clear-global-highlight">✕</button>
+      </aside>
+    </main>
+  </div>
+
+  <!-- Firebase Configuration Modal -->
+  <div id="config-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center;">
+    <div style="background: var(--surface-color); padding: 32px; border-radius: 12px; width: 400px; border: 1px solid var(--border-color);">
+      <h2 style="margin-bottom: 16px;">Настройка Firebase</h2>
+      <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 24px;">Вставь свой Firebase Web Config объект здесь для включения мультиплеера.</p>
+      <textarea id="firebase-config-input" style="width: 100%; height: 150px; background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-primary); padding: 12px; border-radius: 8px; font-family: monospace; font-size: 12px; margin-bottom: 16px;" placeholder='{ "apiKey": "...", ... }'></textarea>
+      <button class="btn" id="save-config" style="width: 100%;">Подключиться и играть</button>
+    </div>
+  </div>
+
+  <script type="module" src="/main.js"></script>
+</body>
+</html>
